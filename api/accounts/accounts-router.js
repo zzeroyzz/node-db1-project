@@ -10,26 +10,29 @@ router.get('/',async (req, res, next) => {
    next(err)
  }
 })
-router.get('/:id', mw.checkAccountId, async(req, res, next) => {
-  try {
-    const {id} =req.params
+router.get('/:id', mw.checkAccountId, async (req, res, next) => {
+  try{
+    const {id} = req.params
     const data = await Accounts.getById(id)
     res.json(data)
-  } catch (err) {
+  }catch(err){
     next(err)
   }
 })
 
-router.post('/', mw.checkAccountPayload, async(req, res, next) => {
- try {
-   const newAccount = await Accounts.create(req.body)
-   res.status(201).json(newAccount)
- } catch (err) {
-   next(err)
- }
+
+
+router.post('/', mw.checkAccountPayload, mw.checkAccountNameUnique, (req, res, next) => {
+  Accounts.create(req.body)
+  .then(account=>{
+      res.status(201).json(account)
+  })
+  .catch(error=>{
+      next(error)
+  })
 })
 
-router.put('/:id', mw.checkAccountPayload, mw.checkAccountId, async(req, res, next) => {
+router.put('/:id', mw.checkAccountId,mw.checkAccountPayload, mw.checkAccountId, async(req, res, next) => {
   try {
     const updatedAccount = await Accounts.updateById(req.params.id, req.body)
     res.json(updatedAccount)
@@ -40,7 +43,7 @@ router.put('/:id', mw.checkAccountPayload, mw.checkAccountId, async(req, res, ne
 
 router.delete('/:id',mw.checkAccountId, async(req, res, next) => {
   try {
-    const deletedAccount = await Accounts.remove(req.params.id)
+    const deletedAccount = await Accounts.deleteById(req.params.id)
     res.json(deletedAccount)
   } catch (err) {
     next(err)

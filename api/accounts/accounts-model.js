@@ -6,17 +6,22 @@ const getAll = () => {
 }
 
 const getById = id => {
-  return db('account').where('id',id).first()
+  return db('accounts').where('id',id).first()
 }
 
 const create = async account => {
-  const [id] = await db('posts').insert({account})
-  return getById(id)
+  return db('accounts').insert(account)
+  .then(([id]) =>{
+    return db('accounts').where('id',id).first()
+  })
 }
 
 const updateById = async (id, account) => {
-  await db('accounts').where('id',id).update({id, account})
-  return getById(id)
+  const accountId = id
+  return db('accounts').where('id',id).update(account)
+  .then(() =>{
+    return db('accounts').where('id',id).first()
+  })
 }
 
 const deleteById = async id => {
