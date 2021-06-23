@@ -12,6 +12,7 @@ const accounts = [
   { name: 'account-11', budget: 19.91 },
   { name: 'account-12', budget: 7080.00 },
   { name: 'account-13', budget: 1234.00 },
+  
 ]
 
 exports.accounts = accounts
